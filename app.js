@@ -1,0 +1,1 @@
+import { init } from './functions/validacao-usuario.js'
