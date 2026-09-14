@@ -41,10 +41,10 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 ---
 
 1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/kauedavi/projeto-banco-NodeJS.git
-   ```
+```bash
+git clone https://github.com/kauedavi/projeto-banco-NodeJS.git
 
+```
 
 2. **Acesse o diretório do projeto:**
 ```bash
