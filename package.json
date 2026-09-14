@@ -8,7 +8,9 @@
   "main": "app.js",
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"node --env-file .env src/app.js ",
+    "obs":"node --watch --env-file .env src/app.js "
   },
   "keywords": [],
   "author": "",
