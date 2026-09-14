@@ -1,1 +1,1 @@
-import { init } from './functions/validacao-usuario.js'
+import { check } from './functions/validacao-usuario.js'

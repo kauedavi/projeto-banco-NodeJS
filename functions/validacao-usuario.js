@@ -1,120 +1,46 @@
-console.log("Aguarde, vamos validar seus dados...");
-
+// Zod é uma biblioteca que valida todos os dados que colocamos
+import { z } from "zod";
 import { recebendoDados } from "./cadastro-user.js";
 
-export async function init() {
+console.log("Aguarde, vamos validar seus dados...");
+
+export async function check() {
+
   const dados = await recebendoDados();
 
-  const checkNome = validarNome(dados);
-  const checkIdade = validarIdade(dados);
-  const checkBanco = validarBanco(dados);
-  const checkSaldo = validarSaldo(dados);
-  const checkCredito = validarCredito(dados);
+  // esse é o molde de como os dados devem chegar ao zod. Podemos unir max e min, e decidimos qual tipo de dado entra (string, number...)
+  // exemplo:  "objeto": "o tipo" e "limitações" 
+  const moldeVerif = z.object({
+    nome: z
+      .string()
+      .min(10, "Erro: Insira seu nome completo!")
+      .max(60, "Erro: nome muito grande!"),
+    idade: z
+      .number()
+      .min(18, "Erro: Você deve ser maior de idade!")
+      .max(120, "Idade incompativel"),
+    banco: z
+      .string()
+      .min(1, "Banco invalido, nome curto.")
+      .max(30, "Nome extenso, simplifique."),
+    saldo: z.number().min(0, "Erro: Você não atende os criterios de saldo"),
+    credito: z.number().min(0, "Erro: Você não atende os criterios de credito"),
+  });
 
-  const check = errorCkeout(
-    dados,
-    checkNome,
-    checkIdade,
-    checkBanco,
-    checkSaldo,
-    checkCredito,
-  );
+  // aqui juntamos o molde com os dados, para ele conseguir trata-los
+  const verif = moldeVerif.safeParse(dados);
 
-  if (check === true) {
-    console.log("cadastre novamente");
+  if (!verif.success) {
+    console.log(verif.error.format());
   } else {
-    gerarUser(dados);
+    gerarUser(verif.data);
   }
 }
 
-function validarNome(dados) {
-  if (!dados.nome || dados.nome == "") {
-    console.log("Erro: nome não informado!");
-    return false;
-  } else if (dados.nome.length < 10) {
-    console.log("Erro: nome completo não informado!");
-    return false;
-  } else {
-    console.log("Sucesso: nome validado!");
-    return true;
-  }
-}
-
-function validarIdade(dados) {
-  if (isNaN(dados.idade) || dados.idade <= 0 || dados.idade > 120) {
-    console.log("Erro: idade não informada corretamente");
-    return false;
-  } else {
-    console.log("Sucesso: idade validado!");
-    return true;
-  }
-}
-
-function validarBanco(dados) {
-  if (!dados.banco || dados.banco == "") {
-    console.log("Erro: nome do banco não consta!");
-    return false;
-  } else {
-    console.log("Sucesso: banco validado!");
-    return true;
-  }
-}
-
-function validarSaldo(dados) {
-  if (isNaN(dados.saldo)) {
-    console.log("Erro: saldo atual não confirmado!");
-    return false;
-  } else {
-    console.log("Sucesso: saldo validado!");
-    return true;
-  }
-}
-
-function validarCredito(dados) {
-  if (isNaN(dados.credito)) {
-    console.log("Erro: credito não informado!");
-    return false;
-  } else {
-    console.log("Sucesso: credito validado!");
-    return true;
-  }
-}
-
-function errorCkeout(
-  dados,
-  checkNome,
-  checkIdade,
-  checkBanco,
-  checkSaldo,
-  checkCredito,
-) {
-  let error = [
-    checkNome,
-    checkIdade,
-    checkBanco,
-    checkSaldo,
-    checkCredito,
-  ].filter((item) => item === false);
-
-  if (error.length > 0) {
-    console.log("Não foi possivel validar os dados. Faça novamente.");
-    return true;
-  } else {
-    console.log(
-      `usuario ${dados.nome} aprovado! Registrando no banco de dados...`,
-    );
-  }
-}
-
-export function gerarUser(dados) {
-  const user = {
-    nome: dados.nome,
-    idade: dados.idade,
-    banco: dados.banco,
-    saldo: dados.saldo,
-    credito: dados.credito,
-  };
+export function gerarUser(data) {
+  const user = data;
+  console.log(`usuario ${user.nome} cadastrado!`);
   return user;
 }
 
-init();
+check();
