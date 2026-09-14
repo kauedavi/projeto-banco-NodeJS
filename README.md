@@ -33,7 +33,7 @@ Antes de começar, certifique-se de ter instalado em sua máquina:
 - Gerenciador de pacotes `npm` ou `yarn`
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="NodeJS Logo" width="80" height="80" />
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="NodeJS Logo" width="600" height="230" />
 </div>
 
 ### 🔧 Passo a Passo
