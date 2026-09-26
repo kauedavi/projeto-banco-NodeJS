@@ -1,15 +1,13 @@
 // Zod é uma biblioteca que valida todos os dados que colocamos
+
 import { z } from "zod";
 import { recebendoDados } from "./cadastro-user.js";
 
 console.log("Aguarde, vamos validar seus dados...");
 
 export async function check() {
-
   const dados = await recebendoDados();
 
-  // esse é o molde de como os dados devem chegar ao zod. Podemos unir max e min, e decidimos qual tipo de dado entra (string, number...)
-  // exemplo:  "objeto": "o tipo" e "limitações" 
   const moldeVerif = z.object({
     nome: z
       .string()
@@ -19,6 +17,15 @@ export async function check() {
       .number()
       .min(18, "Erro: Você deve ser maior de idade!")
       .max(120, "Idade incompativel"),
+    nacionalidade: z
+      .string()
+      .min(4, "nacionalidade não dev er abreviada")
+      .max(30, "entrada muito longa, reduza."),
+    cep: z
+      .string()
+      .min(8, "o CEP deve haver 8 numeros!")
+      .max(8, "O CEP deve haver 8 numeros!")
+      .regex(/^\d+$/, "Erro, digite apenas numeros."),
     banco: z
       .string()
       .min(1, "Banco invalido, nome curto.")
@@ -27,20 +34,38 @@ export async function check() {
     credito: z.number().min(0, "Erro: Você não atende os criterios de credito"),
   });
 
-  // aqui juntamos o molde com os dados, para ele conseguir trata-los
   const verif = moldeVerif.safeParse(dados);
 
   if (!verif.success) {
     console.log(verif.error.format());
   } else {
-    gerarUser(verif.data);
+    dadosLimpos(verif.data);
   }
 }
 
-export function gerarUser(data) {
-  const user = data;
-  console.log(`usuario ${user.nome} cadastrado!`);
-  return user;
+async function validarCep(inputCep) {
+  try {
+    const cepSearch = await fetch(`https://brasilapi.com.br/api/cep/v1/${inputCep}`);
+    if (!cepSearch.ok) return false;
+    const cepAPI = await cepSearch.json();
+    console.log(`CEP ${cepAPI.cep} encontrado`);
+    return true
+  } catch (error) {
+    console.log(error.message);
+    return false
+  }
 }
 
-check();
+export async function dadosLimpos(objetoUsuario) {
+  const user = objetoUsuario;
+  console.log(`usuario ${user.nome} recebido, analisando cep...`);
+  const status = await validarCep(user.cep);
+
+  if (status) {
+    console.log(`${user.cep} é um CEP valido!`);
+  } else {
+    console.log(`CEP inválido!`);
+  }
+
+  return user;
+}

@@ -1,1 +1,2 @@
 import { check } from '../functions/validacao-usuario.js'
+
