@@ -38,8 +38,9 @@ export async function check() {
 
   if (!verif.success) {
     console.log(verif.error.format());
+    return null;
   } else {
-    dadosLimpos(verif.data);
+    return await dadosLimpos(verif.data);
   }
 }
 
